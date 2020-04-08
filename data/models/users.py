@@ -15,4 +15,4 @@ class Users(SqlAlchemyBase):
     email = sa.Column('email', sa.String, nullable=True)
     password = sa.Column('password', sa.String, nullable=True)
 
-    tasks = sa.orm.relation("Tasks", back_populates='users')
+    lessons = sa.orm.relation("Lessons", back_populates='users')
