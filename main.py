@@ -14,23 +14,23 @@ def home():
 
 @app.route('/classes')
 def classes():
-    return render_template('', current_user=current_user)
+    return render_template('classes.html', current_user=current_user)
 
 
 @app.route('/courses')
 def courses():
-    return render_template('', current_user=current_user)
+    return render_template('courses.html', current_current_user=current_user)
 
 
 @app.route('/timetable')
 def timetable():
     lessons = [lesson for lesson in current_user.lessons]
-    return render_template('', current_user=current_user, lessons=lessons)
+    return render_template('timetable.html', current_user=current_user, lessons=lessons)
 
 
 @app.route('/settings')
 def settings():
-    return render_template('', current_user=current_user)
+    return render_template('settings.html', current_user=current_user)
 
 
 if __name__ == '__main__':

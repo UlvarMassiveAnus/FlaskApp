@@ -5,7 +5,7 @@ from data.db_session import SqlAlchemyBase
 class Lessons(SqlAlchemyBase):
     __tablename__ = 'lessons'
 
-    id = sa.Column('id', sa.Integer, nullable=True, autoincrement=True, primary_key=True)
+    id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
     title = sa.Column('title', sa.String, nullable=True)
     to_subject = sa.Column('to_subject', sa.Integer, sa.ForeignKey("subjects.id"), nullable=True)
     to_task = sa.Column('to_task', sa.Integer, sa.ForeignKey("tasks.id"), nullable=True)

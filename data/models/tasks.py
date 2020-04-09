@@ -5,7 +5,7 @@ from data.db_session import SqlAlchemyBase
 class Tasks(SqlAlchemyBase):
     __tablename__ = 'tasks'
 
-    id = sa.Column('id', sa.Integer, nullable=True, autoincrement=True, primary_key=True)
+    id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
     to_subject = sa.Column('to_sublect', sa.Integer, sa.ForeignKey("subjects.id"), nullable=True)
     to_lesson = sa.Column('to_lesson', sa.Integer, sa.ForeignKey("lessons.id"), nullable=True)
     mark = sa.Column('mark', sa.Integer, nullable=True)
