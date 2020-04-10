@@ -1,8 +1,9 @@
 import sqlalchemy as sa
 from data.db_session import SqlAlchemyBase
+from flask_login import UserMixin
 
 
-class Teachers(SqlAlchemyBase):
+class Teachers(SqlAlchemyBase, UserMixin):
     __tablename__ = 'teachers'
 
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
@@ -14,5 +15,5 @@ class Teachers(SqlAlchemyBase):
     email = sa.Column('email', sa.String, nullable=True, unique=True)
     password = sa.Column('password', sa.String, nullable=True)
 
-    lessons = sa.orm.relation("Lessons", back_populates='teachers')
-    subjects = sa.orm.relation("Subjects", back_populates='teachers')
+    lessons = sa.orm.relation("Lessons")
+    subjects = sa.orm.relation("Subjects", foreign_keys=[taught_subject])

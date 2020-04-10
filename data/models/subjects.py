@@ -10,4 +10,4 @@ class Subjects(SqlAlchemyBase):
 
     teachers = sa.orm.relation("Teachers")
     tasks = sa.orm.relation("Tasks")
-    lessons = sa.orm.relation("Lessons", back_populates='subjects')
+    lessons = sa.orm.relation("Lessons")

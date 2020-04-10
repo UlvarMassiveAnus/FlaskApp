@@ -14,7 +14,7 @@ class Lessons(SqlAlchemyBase):
     author = sa.Column('author', sa.String, sa.ForeignKey("teachers.id"), nullable=True)
     lesson_file = sa.Column('lesson_file', sa.String, nullable=True)
 
-    subjects = sa.orm.relation("Subjects")
-    tasks = sa.orm.relation("Tasks")
-    teachers = sa.orm.relation("Teachers")
-    users = sa.orm.relation("Users")
+    subjects = sa.orm.relation("Subjects", foreign_keys=[to_subject])
+    tasks = sa.orm.relation("Tasks", foreign_keys=[to_task])
+    teachers = sa.orm.relation("Teachers", foreign_keys=[author])
+    users = sa.orm.relation("Users", foreign_keys=[to_user])

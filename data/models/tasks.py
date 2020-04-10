@@ -13,5 +13,5 @@ class Tasks(SqlAlchemyBase):
     task_role = sa.Column('task_role', sa.String, nullable=True)
     task_file = sa.Column('task_file', sa.Integer, nullable=True)
 
-    lessons = sa.orm.relation("Lessons", back_populates='tasks')
-    subjects = sa.orm.relation("Subjects", back_populates='tasks')
+    lessons = sa.orm.relation("Lessons", foreign_keys=[to_lesson])
+    subjects = sa.orm.relation("Subjects", foreign_keys=[to_subject])
