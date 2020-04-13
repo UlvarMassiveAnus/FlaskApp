@@ -15,7 +15,7 @@ class Users(SqlAlchemyBase, UserMixin):
     in_class = sa.Column('class', sa.Integer, nullable=True)
     about = sa.Column('about', sa.String, nullable=True)
     email = sa.Column('email', sa.String, nullable=True, unique=True)
-    hashed_password = sa.Column('password', sa.String, nullable=True)
+    hashed_password = sa.Column('hashed_password', sa.String, nullable=True)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

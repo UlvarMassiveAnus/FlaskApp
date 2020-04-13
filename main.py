@@ -24,8 +24,13 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         session = create_session()
-        user = session.query(Users).filter(Users.email == form.email.data).first()
+        user = None
+        student = session.query(Users).filter(Users.email == form.email.data).first()
         teacher = session.query(Teachers).filter(Teachers.email == form.email.data).first()
+        if student is not None:
+            user = student
+        elif teacher is not None:
+            user = teacher
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
