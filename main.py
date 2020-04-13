@@ -3,6 +3,7 @@ from flask_login import current_user, LoginManager, login_user, logout_user, log
 from data.db_session import global_init, create_session
 from data.models.lessons import Lessons
 from data.models.users import Users
+from data.models.teachers import Teachers
 from forms import LoginForm
 
 app = Flask(__name__)
@@ -24,6 +25,7 @@ def login():
     if form.validate_on_submit():
         session = create_session()
         user = session.query(Users).filter(Users.email == form.email.data).first()
+        teacher = session.query(Teachers).filter(Teachers.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")

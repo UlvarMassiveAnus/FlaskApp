@@ -17,10 +17,8 @@ class Users(SqlAlchemyBase, UserMixin):
     email = sa.Column('email', sa.String, nullable=True, unique=True)
     hashed_password = sa.Column('password', sa.String, nullable=True)
 
-    lessons = sa.orm.relation("Lessons")
-
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.hashed_password, password)
+        return self.hashed_password == password
