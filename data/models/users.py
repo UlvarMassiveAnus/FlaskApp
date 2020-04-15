@@ -10,12 +10,13 @@ class Users(SqlAlchemyBase, UserMixin):
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
     surname = sa.Column('surname', sa.String, nullable=True)
     name = sa.Column('name', sa.String, nullable=True)
-    lessons_list = sa.Column('lessons_list', sa.String, nullable=True)
     birth_date = sa.Column('birth_date', sa.Date, nullable=True)
-    in_class = sa.Column('class', sa.Integer, nullable=True)
-    about = sa.Column('about', sa.String, nullable=True)
+    role = sa.Column('role', sa.String, nullable=True)
     email = sa.Column('email', sa.String, nullable=True, unique=True)
     hashed_password = sa.Column('hashed_password', sa.String, nullable=True)
+
+    teachers = sa.orm.relation("Teachers")
+    students = sa.orm.relation("Students")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
