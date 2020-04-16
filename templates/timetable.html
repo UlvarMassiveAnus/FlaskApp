@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for item in lessons %}
+    <div class="bg-white d-flex p-2 bd-highlight">
+            <div class="bg-light rounded shadow-sm p-1 mb-2 rounded flex-fill">
+                <h2 align = "center">
+                {{item.title}}
+                </h2>
+            </div>
+    </div>
+    {% endfor %}
+{% endblock %}
