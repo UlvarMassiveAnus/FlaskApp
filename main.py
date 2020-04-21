@@ -5,6 +5,7 @@ from data.models.lessons import Lessons
 from data.models.users import Users
 from data.models.teachers import Teachers
 from data.models.students import Students
+from data.models.a_class import AClasses
 from forms import LoginForm
 
 app = Flask(__name__)
@@ -12,6 +13,14 @@ app.config['SECRET_KEY'] = '0e294ca639af91b8aaefcdd6ccdbd9b1'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+def found_shadow(user):
+    session = create_session()
+    if user.role == 'Student':
+        return session.query(Students).filter(Students.user_id == user.id).first()
+    elif user.role == 'Teacher':
+        return session.query(Teachers).filter(Teachers.user_id == user.id).first()
 
 
 @login_manager.user_loader
@@ -54,7 +63,19 @@ def home():
 def classes():
     if not current_user.is_authenticated:
         return redirect("/login")
-    return render_template('classes.html', current_user=current_user)
+    session = create_session()
+    shadow = found_shadow(current_user)
+    if current_user.role == "Teacher":
+        a_classes = session.query(AClasses).filter(AClasses.teacher == shadow.id)
+        lessons = {}
+        for cl in a_classes:
+            cur_lessons_list = cl.cur_lessons_list.split(", ")
+            lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in cur_lessons_list]
+    return render_template('classes.html',
+                           current_user=current_user,
+                           shadow=shadow,
+                           a_classes=a_classes,
+                           lessons=lessons)
 
 
 @app.route('/courses')
@@ -83,3 +104,4 @@ def settings():
 if __name__ == '__main__':
     global_init("db/project.sqlite")
     app.run()
+
