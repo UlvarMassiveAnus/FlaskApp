@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Lesson creating</title>
+  <style>
+   .txxt {
+    position: fixed; /* Фиксированное положение */
+    right: 1%; /* Расстояние от правого края окна браузера */
+    top: 12%; /* Расстояние сверху */
+    padding: 1%; /* Поля вокруг текста */ 
+    background: #ffe; /* Цвет фона */ 
+    border: 1px solid #333; /* Параметры рамки */ 
+   }
+   .txxt:hover {
+    background: #786b59; /* Цвет фона */ 
+  }
+  .immg {position: fixed; /* Фиксированное положение */
+    right: 1%; /* Расстояние от правого края окна браузера */
+    top: 5%; /* Расстояние сверху */
+    padding: 1%; /* Поля вокруг текста */ 
+    background: #ffe; /* Цвет фона */ 
+    border: 1px solid #333; /* Параметры рамки */ }
+  .immg:hover {
+    background: #786b59; /* Цвет фона */ 
+  }
+  .dell{
+    position: fixed; /* Фиксированное положение */
+    right: 1%; /* Расстояние от правого края окна браузера */
+    top: 19%; /* Расстояние сверху */
+    padding: 1%; /* Поля вокруг текста */ 
+    background: #ffe; /* Цвет фона */ 
+    border: 1px  solid #333; /* Параметры рамки */ 
+  }
+  .dell:hover{
+    background: #786b59; /* Цвет фона */
+}
+  .send{
+    position: fixed; /* Фиксированное положение */
+    right: 1%; /* Расстояние от правого края окна браузера */
+    top: 26%; /* Расстояние сверху */
+    padding: 1%; /* Поля вокруг текста */ 
+    background: #ffe; /* Цвет фона */ 
+    border: 1px  solid #333; /* Параметры рамки */ 
+  }
+  .send:hover{
+  	background: #786b59; /* Цвет фона */
+  }
+  .dell:hover{
+    background: #786b59; /* Цвет фона */ 
+  }
+   
+  </style>
+  <script src="form.js"></script>
+ </head>
+ <body>
+  <input type="button" value="Add Text" class="txxt" onclick="addtxxt();">
+  <input type="button" value="Add Picture" class="immg" onclick="loadimmg();">
+  <input type="button" value="Remove" class="dell" onclick="removestuff();">
+  <input type="submit" value="Save Lesson" class="send">
+  <div id="block-1">Lesson</div> 
+ </body>
+</html>
