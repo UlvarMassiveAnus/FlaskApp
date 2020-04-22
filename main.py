@@ -15,7 +15,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-def found_shadow(user):
+def find_shadow(user):
     session = create_session()
     if user.role == 'Student':
         return session.query(Students).filter(Students.user_id == user.id).first()
@@ -64,13 +64,15 @@ def classes():
     if not current_user.is_authenticated:
         return redirect("/login")
     session = create_session()
-    shadow = found_shadow(current_user)
+    shadow = find_shadow(current_user)
     if current_user.role == "Teacher":
-        a_classes = session.query(AClasses).filter(AClasses.teacher == shadow.id)
+        a_classes = session.query(AClasses).all()
         lessons = {}
         for cl in a_classes:
             cur_lessons_list = cl.cur_lessons_list.split(", ")
             lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in cur_lessons_list]
+    else:
+        return redirect("/")
     return render_template('classes.html',
                            current_user=current_user,
                            shadow=shadow,
@@ -87,10 +89,16 @@ def courses():
 
 @app.route('/timetable')
 def timetable():
-    # if not current_user.is_authenticated:
-    #    return redirect("/login")
+    if not current_user.is_authenticated:
+        return redirect("/login")
     session = create_session()
-    lessons = [session.query(Lessons).get(int(lesson)) for lesson in session.query(Users).first().lessons]
+    shadow = find_shadow(current_user)
+    if current_user.role == "Student":
+        cl = session.query(AClasses).get(shadow.in_class)
+        cur_lessons_list = cl.cur_lessons_list.split(", ")
+        lessons = [session.query(Lessons).get(int(les)) for les in cur_lessons_list]
+    else:
+        return redirect("/")
     return render_template('timetable.html', current_user=current_user, lessons=lessons)
 
 

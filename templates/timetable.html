@@ -1,12 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="mt-5 timetable">
+    <h1 class="text-center">Ваше расписание на сегодня</h1>
     {% for item in lessons %}
-    <div class="bg-white d-flex p-2 bd-highlight">
-            <div class="bg-light rounded shadow-sm p-1 mb-2 rounded flex-fill">
-                <h2 align = "center">
-                {{item.title}}
-                </h2>
+        {% if loop.first %}
+            <div class="bg-secondary d-flex p-2 bd-highlight fround">
+                <div class="bg-light shadow-sm p-1 mb-1 flex-fill rounded">
+                    <h2>
+                    {{ loop.index }}. {{item.title}}
+                    </h2>
+                </div>
             </div>
-    </div>
+        {% elif loop.last %}
+            <div class="bg-secondary d-flex p-2 bd-highlight lround">
+                <div class="bg-light shadow-sm p-1 mb-1 flex-fill rounded">
+                    <h2>
+                    {{ loop.index }}. {{item.title}}
+                    </h2>
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-secondary d-flex p-2 bd-highlight">
+                <div class="bg-light shadow-sm p-1 mb-1 flex-fill rounded">
+                    <h2>
+                    {{ loop.index }}. {{item.title}}
+                    </h2>
+                </div>
+            </div>
+        {% endif %}
     {% endfor %}
+
+</div>
+<style>
+    .timetable{
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 50%;
+        width: 50%;
+    }
+    .fround{
+        border-radius: 5px 5px 0 0;
+    }
+    .lround{
+        border-radius: 0 0 5px 5px;
+    }
+</style>
 {% endblock %}

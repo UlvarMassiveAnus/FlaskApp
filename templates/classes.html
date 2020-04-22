@@ -13,17 +13,40 @@
     {% for a_class in a_classes %}
         <tr>
             <td scope="row">{{ a_class.id }}</td>
-            <td>{{ current_user.surname + current_user.name }}</td>
+            <td>{{ a_class.teachers.users.name + " " + a_class.teachers.users.surname }}</td>
             <td>{{ a_class.title }}</td>
             <td>
-                <p>{% for lesson in lessons[a_class.title] %}{{ lesson.title }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+                {% for lesson in lessons[a_class.title] %}{{ lesson.title }}{% if not loop.last %}, {% endif %}{% endfor %}
             </td>
-            <td class="last_col"><a class="btn btn-primary" href="/home">To home</a></td>
+            <td class="last_col">
+                {% if shadow.id == a_class.teacher %}
+                    <a class="btn btn-primary" href="/home">To home</a>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
-</table>
-</div>
-{% elif current_user.role == "Student" %}
 
+</table>
+<style>
+    table {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 14px;
+        margin-top: 40px;
+        margin-left: auto;
+        margin-right: auto;
+        background: #e8d1c8;
+        max-width: 50%;
+        width: 50%;
+        border-collapse: collapse;
+        border-radius: 8px 8px 8px 8px;
+    }
+    td, th {
+        padding: 10px;
+    }
+    .last_col {
+        background-color: white;
+        border: 1px solid white;
+    }
+</style>
 {% endif %}
 {% endblock %}
