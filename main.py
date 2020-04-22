@@ -104,4 +104,3 @@ def settings():
 if __name__ == '__main__':
     global_init("db/project.sqlite")
     app.run()
-
