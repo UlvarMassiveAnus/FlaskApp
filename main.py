@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from data.db_session import global_init, create_session
 from data.models.lessons import Lessons
@@ -70,7 +70,8 @@ def classes():
         lessons = {}
         for cl in a_classes:
             cur_lessons_list = cl.cur_lessons_list.split(", ")
-            lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in cur_lessons_list]
+            lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in
+                                 cur_lessons_list]
     return render_template('classes.html',
                            current_user=current_user,
                            shadow=shadow,
@@ -99,6 +100,23 @@ def settings():
     if not current_user.is_authenticated:
         return redirect("/login")
     return render_template('settings.html', current_user=current_user)
+
+
+@app.route('/lessoncreate',methods = ['GET','POST'])
+def lessoncreate():
+    if request.method == 'GET':
+        return render_template('lessoncreate.html', url_for=url_for)
+    elif request.method == 'POST':
+        print(request.form.to_dict())
+        return redirect('/')
+
+@app.route('/testcreate',methods = ['GET','POST'])
+def testcreate():
+    if request.method == 'GET':
+        return render_template('testcreate.html', url_for=url_for)
+    elif request.method == 'POST':
+        print(request.form.to_dict())
+        return redirect('/')
 
 
 if __name__ == '__main__':
