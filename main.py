@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect, url_for
+import os
+import datetime
+from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from data.db_session import global_init, create_session
 from data.models.lessons import Lessons
@@ -70,7 +72,8 @@ def classes():
         lessons = {}
         for cl in a_classes:
             cur_lessons_list = cl.cur_lessons_list.split(", ")
-            lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in cur_lessons_list]
+            lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in
+                                 cur_lessons_list]
     else:
         return redirect("/")
     return render_template('classes.html',
@@ -107,6 +110,56 @@ def settings():
     if not current_user.is_authenticated:
         return redirect("/login")
     return render_template('settings.html', current_user=current_user)
+
+
+@app.route('/lessoncreate', methods=['GET', 'POST'])
+def lessoncreate():
+    if request.method == 'GET':
+        return render_template('lessoncreate.html', url_for=url_for)
+    elif request.method == 'POST':
+        os.mkdir(path=os.path.join("lessons", "id_lesson"))
+        files_data = request.files.to_dict()
+        text_data = request.form.to_dict()
+        file = []
+        for input_name in files_data.keys():
+            files_data[input_name].save(dst=os.path.join("lessons", "id_lesson",
+                                                         str(current_user.id) + "_" + files_data[input_name].filename))
+        for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
+            file.insert(int(key[-1]) - 1, key)
+        with open("lessons/id_lesson/id_lesson.txt", "w") as f:
+            for key in file:
+                try:
+                    f.write(text_data[key].replace("\n", "") + "\n")
+                except Exception:
+                    f.write(f"[{files_data[key].filename}]\n")
+        return redirect('/')
+
+
+@app.route('/testcreate', methods=['GET', 'POST'])
+def testcreate():
+    if request.method == 'GET':
+        return render_template('testcreate.html', url_for=url_for)
+    elif request.method == 'POST':
+        os.mkdir(path=os.path.join("tasks", "id_task"))
+        data = request.form.to_dict()
+        file = []
+        for key in data:
+            if "qst" in key:
+                file.insert(int(key[-1]) - 1, (key,
+                                               f"wrn1-{key[-1]}",
+                                               f"wrn2-{key[-1]}",
+                                               f"wrn3-{key[-1]}",
+                                               f"rgh4-{key[-1]}"))
+        print(data, file)
+        with open("tasks/id_task/id_task.txt", "w") as f:
+            for key in file:
+                f.write(data[key[0]] + "\n")
+                f.write(f"[1{data[key[1]]}]" + "\n")
+                f.write(f"[2{data[key[2]]}]" + "\n")
+                f.write(f"[3{data[key[3]]}]" + "\n")
+                f.write(f"[4{data[key[4]]}]" + "\n")
+                f.write("|NewQuestion|\n")
+        return redirect('/')
 
 
 if __name__ == '__main__':
