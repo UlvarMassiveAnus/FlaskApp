@@ -51,13 +51,16 @@
   }
    
   </style>
-  <script src="{{ url_for('static', filename='form.js') }}"></script>
+  <script src="{{ url_for('static', filename='form.js', v=5)}}"></script>
  </head>
  <body>
   <input type="button" value="Add Text" class="txxt" onclick="addtxxt();">
   <input type="button" value="Add Picture" class="immg" onclick="loadimmg();">
   <input type="button" value="Remove" class="dell" onclick="removestuff();">
-  <input type="submit" value="Save Lesson" class="send">
-  <div id="block-1">Lesson</div> 
+  <form method="post">
+   <input type="submit" value="Save Lesson" class="send">
+  <div id="block-1">Lesson
+  </div>
+  </form>
  </body>
 </html>
