@@ -1,10 +1,15 @@
+var i = 1;
+var j = 1;
 function addtxxt() {
 		var element = document.getElementById('block-1');
 		var texts = document.createElement('TEXTAREA');
 
-		texts.setAttribute('cols','80');
+		texts.setAttribute('cols','80px');
 		texts.setAttribute('rows','20'); 
 		texts.setAttribute('placeholder','Your text');
+		texts.setAttribute('name','textarea' + i);
+
+		i++;
 
 		var br = document.createElement('br');
 
@@ -23,12 +28,16 @@ function removestuff(){
 }
 function loadimmg(){
 	var element = document.getElementById('block-1');
-	var ld = document.createElement('div');
+	var ld = document.createElement('INPUT');
+
+	ld.setAttribute('type','file');
+	ld.setAttribute('name','imgload' + i);
+	ld.setAttribute('accept','image/jpeg,image/png,image/gif');
 
 	var br = document.createElement('br');
 
 
-	ld.innerHTML = '<input type="file" name="img" id = "cnfr" accept="image/jpeg,image/png,image/gif">';
+    i++;
 
 	element.appendChild(br);
 	element.appendChild(ld);
