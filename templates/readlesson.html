@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for line in data %}
+    {% if line[0] == "[" and line[-1] == "]" %}
+        <img src="{{ url_for('static', filename='img/' + line[1:-1]) }}">
+    {% else %}
+        <p>{{ line }}</p>
+    {% endif %}
+{% endfor %}
+<style>
+    img {
+        height: 400px;
+        max-width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+    p {
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+</style>
+{% endblock %}

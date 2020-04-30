@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post">
+    <input type="hidden" name="right_answers" value="{{ right_answers }}">
+    <input type="hidden" name="task_id" value="{{ task_id }}">
+{% for qst in data %}
+    <p>{{ qst[0] }}</p>
+    <p>1) {{qst[rand[(loop.index - 1) * 4]]}} <input name="{{ loop.index }}" type="radio" value="1"></p>
+    <p>2) {{qst[rand[(loop.index - 1) * 4 + 1]]}} <input name="{{ loop.index }}" type="radio" value="2"></p>
+    <p>3) {{qst[rand[(loop.index - 1) * 4 + 2]]}} <input name="{{ loop.index }}" type="radio" value="3"></p>
+    <p>4) {{qst[rand[(loop.index - 1) * 4 + 3]]}} <input name="{{ loop.index }}" type="radio" value="4"></p>
+{% endfor %}
+    <input type="submit" value="Отправить">
+</form>
+{% endblock %}

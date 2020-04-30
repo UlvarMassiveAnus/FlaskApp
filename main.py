@@ -1,5 +1,7 @@
 import os
 import datetime
+import random
+from math import ceil
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from data.db_session import global_init, create_session
@@ -23,6 +25,15 @@ def find_shadow(user):
         return session.query(Students).filter(Students.user_id == user.id).first()
     elif user.role == 'Teacher':
         return session.query(Teachers).filter(Teachers.user_id == user.id).first()
+
+
+def randomize_questions(n):
+    reference = [1, 2, 3, 4]
+    result = []
+    for i in range(n):
+        random.shuffle(reference)
+        result += reference
+    return result
 
 
 @login_manager.user_loader
@@ -117,21 +128,20 @@ def lessoncreate():
     if request.method == 'GET':
         return render_template('lessoncreate.html', url_for=url_for)
     elif request.method == 'POST':
-        os.mkdir(path=os.path.join("lessons", "id_lesson"))
         files_data = request.files.to_dict()
         text_data = request.form.to_dict()
         file = []
         for input_name in files_data.keys():
-            files_data[input_name].save(dst=os.path.join("lessons", "id_lesson",
-                                                         str(current_user.id) + "_" + files_data[input_name].filename))
+            filepath = os.path.join("static", "img", str(current_user.id) + "_" + files_data[input_name].filename)
+            files_data[input_name].save(dst=filepath)
         for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
             file.insert(int(key[-1]) - 1, key)
-        with open("lessons/id_lesson/id_lesson.txt", "w") as f:
+        with open("lessons/id_lesson.txt", "w") as f:
             for key in file:
                 try:
                     f.write(text_data[key].replace("\n", "") + "\n")
                 except Exception:
-                    f.write(f"[{files_data[key].filename}]\n")
+                    f.write(f"[{str(current_user.id) + '_' + files_data[key].filename}]\n")
         return redirect('/')
 
 
@@ -140,7 +150,6 @@ def testcreate():
     if request.method == 'GET':
         return render_template('testcreate.html', url_for=url_for)
     elif request.method == 'POST':
-        os.mkdir(path=os.path.join("tasks", "id_task"))
         data = request.form.to_dict()
         file = []
         for key in data:
@@ -150,16 +159,59 @@ def testcreate():
                                                f"wrn2-{key[-1]}",
                                                f"wrn3-{key[-1]}",
                                                f"rgh4-{key[-1]}"))
-        print(data, file)
-        with open("tasks/id_task/id_task.txt", "w") as f:
+        with open("tasks/id_task.txt", "w") as f:
             for key in file:
                 f.write(data[key[0]] + "\n")
-                f.write(f"[1{data[key[1]]}]" + "\n")
-                f.write(f"[2{data[key[2]]}]" + "\n")
-                f.write(f"[3{data[key[3]]}]" + "\n")
-                f.write(f"[4{data[key[4]]}]" + "\n")
+                f.write(f"[{data[key[1]]}]" + "\n")
+                f.write(f"[{data[key[2]]}]" + "\n")
+                f.write(f"[{data[key[3]]}]" + "\n")
+                f.write(f"[{data[key[4]]}]" + "\n")
                 f.write("|NewQuestion|\n")
         return redirect('/')
+
+
+@app.route('/readlesson')
+def readlesson():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    with open("lessons/id_lesson.txt") as f:
+        data = f.readlines()
+        for line in range(len(data)):
+            data[line] = data[line].strip("\n")
+    return render_template('readlesson.html', data=data,
+                           current_user=current_user,
+                           url_for=url_for)
+
+
+@app.route('/readtest', methods=['GET', 'POST'])
+def readtest():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    if request.method == 'GET':
+        with open("tasks/id_task.txt") as f:
+            data = f.readlines()
+            for line in range(len(data)):
+                data[line] = data[line].strip("\n")
+        qst_list = []
+        file = []
+        for line in data:
+            line = line.strip('\n')
+            if line == "|NewQuestion|":
+                file.append(qst_list)
+                qst_list = []
+            else:
+                qst_list.append(line.strip("[").strip("]"))
+        rand = randomize_questions(len(file))
+        return render_template('readtest.html', data=file,
+                               current_user=current_user, rand=rand,
+                               right_answers="".join([str(i % 4 + 1) for i in range(len(rand)) if rand[i] == 4]),
+                               task_id="test_value")
+    elif request.method == 'POST':
+        mark = 0
+        for i, r in enumerate(request.form["right_answers"]):
+            if request.form[str(i + 1)] == r:
+                mark += 1
+        return render_template('result.html', mark=int((mark / len(request.form["right_answers"])) * 100))
 
 
 if __name__ == '__main__':
