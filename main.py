@@ -1,6 +1,7 @@
 import os
 import datetime
 import random
+import requests
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask_restful import Api
@@ -10,6 +11,8 @@ from data.models.users import Users
 from data.models.teachers import Teachers
 from data.models.students import Students
 from data.models.a_class import AClasses
+from data.models.subjects import Subjects
+from data.models.tasks import Tasks
 from forms import LoginForm
 from api.lessons_resources import LessonsResources, LessonsListResources
 from api.tasks_resources import TasksResources, TasksListResources
@@ -135,27 +138,39 @@ def lessoncreate():
         files_data = request.files.to_dict()
         text_data = request.form.to_dict()
         file = []
+        shadow = find_shadow(current_user)
+        session = create_session()
         for input_name in files_data.keys():
             filepath = os.path.join("static", "img", str(int(datetime.datetime.today().timestamp())) + "_" + files_data[input_name].filename)
             files_data[input_name].save(dst=filepath)
         for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
             file.insert(int(key[-1]) - 1, key)
-        with open("lessons/id_lesson.txt", "w") as f:
+        file_prefix = datetime.datetime.today().timestamp()
+        with open(f"lessons/{file_prefix}_lesson.txt", "w") as f:
             for key in file:
                 try:
                     f.write(text_data[key].replace("\n", ""))
                 except Exception:
                     f.write(f"\n[{str(current_user.id) + '_' + files_data[key].filename}]\n")
-        return redirect('/')
+        lesson = Lessons(title="TITLE",
+                         to_subject=shadow.taught_subject,
+                         to_class=shadow.a_class,
+                         lesson_date=datetime.date(2020, 11, 1),
+                         author=shadow.id,
+                         lesson_file=f"{file_prefix}_lesson.txt")
+        session.add(lesson)
+        session.commit()
+        return redirect(f'/testcreate/{lesson.id}')
 
 
-@app.route('/testcreate', methods=['GET', 'POST'])
-def testcreate():
+@app.route('/testcreate/<int:lesson_id>', methods=['GET', 'POST'])
+def testcreate(lesson_id):
     if request.method == 'GET':
         return render_template('testcreate.html', url_for=url_for)
     elif request.method == 'POST':
         data = request.form.to_dict()
         file = []
+        shadow = find_shadow(current_user)
         for key in data:
             if "qst" in key:
                 file.insert(int(key[-1]) - 1, (key,
@@ -163,7 +178,8 @@ def testcreate():
                                                f"wrn2-{key[-1]}",
                                                f"wrn3-{key[-1]}",
                                                f"rgh4-{key[-1]}"))
-        with open("tasks/id_task.txt", "w") as f:
+        file_prefix = datetime.datetime.today().timestamp()
+        with open(f"tasks/{file_prefix}_task.txt", "w") as f:
             for key in file:
                 f.write(data[key[0]] + "\n")
                 f.write(f"[{data[key[1]]}]" + "\n")
@@ -171,6 +187,16 @@ def testcreate():
                 f.write(f"[{data[key[3]]}]" + "\n")
                 f.write(f"[{data[key[4]]}]" + "\n")
                 f.write("|NewQuestion|\n")
+        task = Tasks(to_subject=shadow.taught_subject,
+                     to_lesson=lesson_id,
+                     task_date=datetime.date(2020, 11, 1),
+                     task_role="TEST",
+                     task_file=f'{file_prefix}_task.txt')
+        session = create_session()
+        lesson = session.query(Lessons).get(lesson_id)
+        lesson.to_task = task.id
+        session.add(task)
+        session.commit()
         return redirect('/')
 
 
