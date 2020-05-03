@@ -1,9 +1,9 @@
 import os
 import datetime
 import random
-from math import ceil
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
+from flask_restful import Api
 from data.db_session import global_init, create_session
 from data.models.lessons import Lessons
 from data.models.users import Users
@@ -11,9 +11,11 @@ from data.models.teachers import Teachers
 from data.models.students import Students
 from data.models.a_class import AClasses
 from forms import LoginForm
+from api.lessons_resources import LessonsResources, LessonsListResources
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0e294ca639af91b8aaefcdd6ccdbd9b1'
+api = Api(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -132,16 +134,16 @@ def lessoncreate():
         text_data = request.form.to_dict()
         file = []
         for input_name in files_data.keys():
-            filepath = os.path.join("static", "img", str(current_user.id) + "_" + files_data[input_name].filename)
+            filepath = os.path.join("static", "img", str(int(datetime.datetime.today().timestamp())) + "_" + files_data[input_name].filename)
             files_data[input_name].save(dst=filepath)
         for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
             file.insert(int(key[-1]) - 1, key)
         with open("lessons/id_lesson.txt", "w") as f:
             for key in file:
                 try:
-                    f.write(text_data[key].replace("\n", "") + "\n")
+                    f.write(text_data[key].replace("\n", ""))
                 except Exception:
-                    f.write(f"[{str(current_user.id) + '_' + files_data[key].filename}]\n")
+                    f.write(f"\n[{str(current_user.id) + '_' + files_data[key].filename}]\n")
         return redirect('/')
 
 
@@ -216,4 +218,6 @@ def readtest():
 
 if __name__ == '__main__':
     global_init("db/project.sqlite")
+    api.add_resource(LessonsResources, '/api/v1/lessons/<int:lessons_id>')
+    api.add_resource(LessonsListResources, "/api/v1/lessons")
     app.run()

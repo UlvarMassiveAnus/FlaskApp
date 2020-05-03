@@ -1,8 +1,9 @@
 import sqlalchemy as sa
 from data.db_session import SqlAlchemyBase
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Lessons(SqlAlchemyBase):
+class Lessons(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'lessons'
 
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
