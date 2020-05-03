@@ -12,6 +12,8 @@ from data.models.students import Students
 from data.models.a_class import AClasses
 from forms import LoginForm
 from api.lessons_resources import LessonsResources, LessonsListResources
+from api.tasks_resources import TasksResources, TasksListResources
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0e294ca639af91b8aaefcdd6ccdbd9b1'
@@ -220,4 +222,6 @@ if __name__ == '__main__':
     global_init("db/project.sqlite")
     api.add_resource(LessonsResources, '/api/v1/lessons/<int:lessons_id>')
     api.add_resource(LessonsListResources, "/api/v1/lessons")
+    api.add_resource(TasksResources, '/api/v1/tasks/<int:tasks_id>')
+    api.add_resource(TasksListResources, '/api/v1/tasks')
     app.run()
