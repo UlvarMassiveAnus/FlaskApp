@@ -5,27 +5,27 @@
     {% for item in lessons %}
         {% if loop.first %}
             <div class="bg-secondary d-flex p-2 bd-highlight fround">
-                <div class="bg-light shadow-sm p-1 mb-1 flex-fill rounded">
+                <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded" href="/readlesson/{{ item.id }}">
                     <h2>
                     {{ loop.index }}. {{item.title}}
                     </h2>
-                </div>
+                </a>
             </div>
         {% elif loop.last %}
             <div class="bg-secondary d-flex p-2 bd-highlight lround">
-                <div class="bg-light shadow-sm p-1 mb-1 flex-fill rounded">
+                <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded" href="/readlesson/{{ item.id }}">
                     <h2>
                     {{ loop.index }}. {{item.title}}
                     </h2>
-                </div>
+                </a>
             </div>
         {% else %}
             <div class="bg-secondary d-flex p-2 bd-highlight">
-                <div class="bg-light shadow-sm p-1 mb-1 flex-fill rounded">
+                <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded" href="/readlesson/{{ item.id }}>
                     <h2>
                     {{ loop.index }}. {{item.title}}
                     </h2>
-                </div>
+                </a>
             </div>
         {% endif %}
     {% endfor %}

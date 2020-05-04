@@ -1,7 +1,6 @@
 import os
 import datetime
 import random
-import requests
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask_restful import Api
@@ -115,8 +114,15 @@ def timetable():
     shadow = find_shadow(current_user)
     if current_user.role == "Student":
         cl = session.query(AClasses).get(shadow.in_class)
+        cur_lessons_list = []
+        for ls in session.query(Lessons).filter(Lessons.to_class == cl.id).all():
+            if ls.lesson_date == datetime.datetime.today().date():
+                cur_lessons_list.append(ls.title)
+        cl.cur_lessons_list = ', '.join(cur_lessons_list)
+        session.commit()
+        session = create_session()
         cur_lessons_list = cl.cur_lessons_list.split(", ")
-        lessons = [session.query(Lessons).get(int(les)) for les in cur_lessons_list]
+        lessons = [session.query(Lessons).filter(Lessons.title == les).first() for les in cur_lessons_list]
     else:
         return redirect("/")
     return render_template('timetable.html', current_user=current_user, lessons=lessons)
@@ -135,24 +141,32 @@ def lessoncreate():
         return render_template('lessoncreate.html', url_for=url_for)
     elif request.method == 'POST':
         files_data = request.files.to_dict()
+        files_paths = {}
+
         text_data = request.form.to_dict()
         file = []
+
         shadow = find_shadow(current_user)
-        session = create_session()
+
         for input_name in files_data.keys():
-            filepath = os.path.join("static", "img", str(int(datetime.datetime.today().timestamp())) + "_" + files_data[
-                input_name].filename)
+            file_prefix = int(datetime.datetime.today().timestamp())
+            filepath = os.path.join("static", "img", str(file_prefix) + "_" + files_data[input_name].filename)
+            files_paths[input_name] = str(file_prefix) + "_" + files_data[input_name].filename
             files_data[input_name].save(dst=filepath)
+
         for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
             file.insert(int(key[-1]) - 1, key)
+
         file_prefix = int(datetime.datetime.today().timestamp())
         with open(f"lessons/{file_prefix}_lesson.txt", "w") as f:
             for key in file:
                 try:
                     f.write(text_data[key].replace("\n", ""))
                 except Exception:
-                    f.write(f"\n[{str(current_user.id) + '_' + files_data[key].filename}]\n")
-        lesson = Lessons(title="TITLE",
+                    f.write(f"\n[{files_paths[key]}]\n")
+
+        session = create_session()
+        lesson = Lessons(title=request.form['lsnm1'],
                          to_subject=shadow.taught_subject,
                          to_class=shadow.a_class,
                          lesson_date=datetime.date(2020, 11, 1),
@@ -194,18 +208,21 @@ def testcreate(lesson_id):
                      task_role="TEST",
                      task_file=f'{file_prefix}_task.txt')
         session = create_session()
+        session.add(task)
+        session.commit()
         lesson = session.query(Lessons).get(lesson_id)
         lesson.to_task = task.id
-        session.add(task)
         session.commit()
         return redirect('/')
 
 
-@app.route('/readlesson')
-def readlesson():
+@app.route('/readlesson/<int:lesson_id>')
+def readlesson(lesson_id):
     if not current_user.is_authenticated:
         return redirect('/login')
-    with open("lessons/id_lesson.txt") as f:
+    session = create_session()
+    lesson = session.query(Lessons).get(lesson_id)
+    with open(f"lessons/{lesson.lesson_file}") as f:
         data = f.readlines()
         for line in range(len(data)):
             data[line] = data[line].strip("\n")
@@ -214,12 +231,14 @@ def readlesson():
                            url_for=url_for)
 
 
-@app.route('/readtest', methods=['GET', 'POST'])
-def readtest():
+@app.route('/readtest/<int:task_id>', methods=['GET', 'POST'])
+def readtest(task_id):
     if not current_user.is_authenticated:
         return redirect('/login')
     if request.method == 'GET':
-        with open("tasks/id_task.txt") as f:
+        session = create_session()
+        task = session.query(Tasks).get(task_id)
+        with open(f"tasks/{task.task_file}") as f:
             data = f.readlines()
             for line in range(len(data)):
                 data[line] = data[line].strip("\n")
