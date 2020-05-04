@@ -17,7 +17,6 @@ from forms import LoginForm
 from api.lessons_resources import LessonsResources, LessonsListResources
 from api.tasks_resources import TasksResources, TasksListResources
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0e294ca639af91b8aaefcdd6ccdbd9b1'
 api = Api(app)
@@ -141,11 +140,12 @@ def lessoncreate():
         shadow = find_shadow(current_user)
         session = create_session()
         for input_name in files_data.keys():
-            filepath = os.path.join("static", "img", str(int(datetime.datetime.today().timestamp())) + "_" + files_data[input_name].filename)
+            filepath = os.path.join("static", "img", str(int(datetime.datetime.today().timestamp())) + "_" + files_data[
+                input_name].filename)
             files_data[input_name].save(dst=filepath)
         for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
             file.insert(int(key[-1]) - 1, key)
-        file_prefix = datetime.datetime.today().timestamp()
+        file_prefix = int(datetime.datetime.today().timestamp())
         with open(f"lessons/{file_prefix}_lesson.txt", "w") as f:
             for key in file:
                 try:
@@ -166,11 +166,12 @@ def lessoncreate():
 @app.route('/testcreate/<int:lesson_id>', methods=['GET', 'POST'])
 def testcreate(lesson_id):
     if request.method == 'GET':
-        return render_template('testcreate.html', url_for=url_for)
+        return render_template('testcreate.html', url_for=url_for, lesson_id=lesson_id)
     elif request.method == 'POST':
         data = request.form.to_dict()
         file = []
         shadow = find_shadow(current_user)
+        lesson_id = request.form['lesson_id']
         for key in data:
             if "qst" in key:
                 file.insert(int(key[-1]) - 1, (key,
@@ -178,7 +179,7 @@ def testcreate(lesson_id):
                                                f"wrn2-{key[-1]}",
                                                f"wrn3-{key[-1]}",
                                                f"rgh4-{key[-1]}"))
-        file_prefix = datetime.datetime.today().timestamp()
+        file_prefix = int(datetime.datetime.today().timestamp())
         with open(f"tasks/{file_prefix}_task.txt", "w") as f:
             for key in file:
                 f.write(data[key[0]] + "\n")

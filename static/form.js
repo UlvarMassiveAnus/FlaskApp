@@ -1,4 +1,4 @@
-var i = 1;
+var i = 2;
 var j = 1;
 function addtxxt() {
 		var element = document.getElementById('block-1');
