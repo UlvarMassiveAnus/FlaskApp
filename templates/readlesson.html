@@ -2,12 +2,15 @@
 
 {% block content %}
 {% for line in data %}
-    {% if line[0] == "[" and line[-1] == "]" %}
+    {% if loop.first %}
+        <h1>{{ line }}</h1>
+    {% elif line[0] == "[" and line[-1] == "]" %}
         <img src="{{ url_for('static', filename='img/' + line[1:-1]) }}">
     {% else %}
         <p>{{ line }}</p>
     {% endif %}
 {% endfor %}
+<a href="/readtest/{{ to_task }}" class="btn btn-primary">Пройти тестирование</a>
 <style>
     img {
         height: 400px;
@@ -16,7 +19,7 @@
         margin-right: auto;
         display: block;
     }
-    p {
+    p, h1 {
         width: 40%;
         margin-left: auto;
         margin-right: auto;

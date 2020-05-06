@@ -2,34 +2,39 @@
 {% block content %}
 <div class="mt-5 timetable">
     <h1 class="text-center">Ваше расписание на сегодня</h1>
-    {% for item in lessons %}
-        {% if loop.first %}
-            <div class="bg-secondary d-flex p-2 bd-highlight fround">
-                <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded" href="/readlesson/{{ item.id }}">
-                    <h2>
-                    {{ loop.index }}. {{item.title}}
-                    </h2>
-                </a>
-            </div>
-        {% elif loop.last %}
-            <div class="bg-secondary d-flex p-2 bd-highlight lround">
-                <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded" href="/readlesson/{{ item.id }}">
-                    <h2>
-                    {{ loop.index }}. {{item.title}}
-                    </h2>
-                </a>
-            </div>
-        {% else %}
-            <div class="bg-secondary d-flex p-2 bd-highlight">
-                <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded" href="/readlesson/{{ item.id }}>
-                    <h2>
-                    {{ loop.index }}. {{item.title}}
-                    </h2>
-                </a>
-            </div>
-        {% endif %}
-    {% endfor %}
-
+    {% if lessons %}
+        {% for item in lessons %}
+            {% if loop.first %}
+                <div class="bg-secondary d-flex p-2 bd-highlight fround">
+                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
+                        <h2>
+                        {{ loop.index }}. {{item.title}}
+                        </h2>
+                    </a>
+                </div>
+            {% elif loop.last %}
+                <div class="bg-secondary d-flex p-2 bd-highlight lround">
+                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
+                        <h2>
+                        {{ loop.index }}. {{item.title}}
+                        </h2>
+                    </a>
+                </div>
+            {% else %}
+                <div class="bg-secondary d-flex p-2 bd-highlight">
+                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
+                        <h2>
+                        {{ loop.index }}. {{item.title}}
+                        </h2>
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+    <div class="alert alert-secondary text-center">
+        <strong>На сегодня нет уроков</strong>
+    </div>
+    {% endif %}
 </div>
 <style>
     .timetable{
@@ -44,5 +49,6 @@
     .lround{
         border-radius: 0 0 5px 5px;
     }
+
 </style>
 {% endblock %}

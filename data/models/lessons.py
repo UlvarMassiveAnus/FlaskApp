@@ -13,6 +13,7 @@ class Lessons(SqlAlchemyBase, SerializerMixin):
     to_class = sa.Column('to_class', sa.Integer, sa.ForeignKey("a_classes.id"), nullable=True)
     lesson_date = sa.Column('lesson_date', sa.Date, nullable=True)
     author = sa.Column('author', sa.String, sa.ForeignKey("teachers.id"), nullable=True)
+    completed_by = sa.Column('completed_by', sa.String, nullable=True)
     lesson_file = sa.Column('lesson_file', sa.String, nullable=True)
 
     subjects = sa.orm.relation("Subjects", foreign_keys=[to_subject])

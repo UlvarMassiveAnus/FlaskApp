@@ -74,42 +74,51 @@ def logout():
 def home():
     if not current_user.is_authenticated:
         return redirect("/login")
-    return render_template('home_page.html', current_user=current_user)
+    return render_template('home_page.html', current_user=current_user, shadow=find_shadow(current_user))
 
 
 @app.route('/classes')
 def classes():
     if not current_user.is_authenticated:
         return redirect("/login")
-    session = create_session()
+
     shadow = find_shadow(current_user)
     if current_user.role == "Teacher":
+
+        session = create_session()
         a_classes = session.query(AClasses).all()
+        for cl in a_classes:
+            cur_lessons_list = []
+            for ls in session.query(Lessons).filter(Lessons.to_class == cl.id).all():
+                if ls.lesson_date == datetime.datetime.today().date():
+                    cur_lessons_list.append(str(ls.id))
+            cl.cur_lessons_list = ', '.join(cur_lessons_list)
+        session.commit()
+
         lessons = {}
+
+        session = create_session()
+        a_classes = session.query(AClasses).all()
         for cl in a_classes:
             cur_lessons_list = cl.cur_lessons_list.split(", ")
             lessons[cl.title] = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in
-                                 cur_lessons_list]
+                                 cur_lessons_list if les]
+
+        return render_template('classes.html',
+                               current_user=current_user,
+                               shadow=shadow,
+                               a_classes=a_classes,
+                               lessons=lessons)
     else:
         return redirect("/")
-    return render_template('classes.html',
-                           current_user=current_user,
-                           shadow=shadow,
-                           a_classes=a_classes,
-                           lessons=lessons)
-
-
-@app.route('/courses')
-def courses():
-    if not current_user.is_authenticated:
-        return redirect("/login")
-    return render_template('courses.html', current_current_user=current_user)
 
 
 @app.route('/timetable')
 def timetable():
     if not current_user.is_authenticated:
         return redirect("/login")
+    if current_user.role == "Teacher":
+        return redirect("/")
     session = create_session()
     shadow = find_shadow(current_user)
     if current_user.role == "Student":
@@ -117,28 +126,25 @@ def timetable():
         cur_lessons_list = []
         for ls in session.query(Lessons).filter(Lessons.to_class == cl.id).all():
             if ls.lesson_date == datetime.datetime.today().date():
-                cur_lessons_list.append(ls.title)
+                cur_lessons_list.append(str(ls.id))
         cl.cur_lessons_list = ', '.join(cur_lessons_list)
         session.commit()
         session = create_session()
-        cur_lessons_list = cl.cur_lessons_list.split(", ")
-        lessons = [session.query(Lessons).filter(Lessons.title == les).first() for les in cur_lessons_list]
+        cur_lessons_list = [i for i in cl.cur_lessons_list.split(", ") if i]
+        lessons = [session.query(Lessons).filter(Lessons.id == int(les)).first() for les in cur_lessons_list]
     else:
         return redirect("/")
     return render_template('timetable.html', current_user=current_user, lessons=lessons)
 
 
-@app.route('/settings')
-def settings():
+@app.route('/lessoncreate/<int:class_id>', methods=['GET', 'POST'])
+def lessoncreate(class_id):
     if not current_user.is_authenticated:
         return redirect("/login")
-    return render_template('settings.html', current_user=current_user)
-
-
-@app.route('/lessoncreate', methods=['GET', 'POST'])
-def lessoncreate():
+    if current_user.role == "Student":
+        return redirect("/")
     if request.method == 'GET':
-        return render_template('lessoncreate.html', url_for=url_for)
+        return render_template('lessoncreate.html', url_for=url_for, class_id=class_id)
     elif request.method == 'POST':
         files_data = request.files.to_dict()
         files_paths = {}
@@ -154,12 +160,13 @@ def lessoncreate():
             files_paths[input_name] = str(file_prefix) + "_" + files_data[input_name].filename
             files_data[input_name].save(dst=filepath)
 
-        for key in [i for i in files_data.keys()] + [i for i in text_data.keys()]:
+        for key in [i for i in files_data.keys() if i[-1].isdigit()] + [i for i in text_data.keys() if i[-1].isdigit()]:
             file.insert(int(key[-1]) - 1, key)
 
         file_prefix = int(datetime.datetime.today().timestamp())
         with open(f"lessons/{file_prefix}_lesson.txt", "w") as f:
-            for key in file:
+            f.write(f"{text_data['lsnm1']}\n")
+            for key in file[1:]:
                 try:
                     f.write(text_data[key].replace("\n", ""))
                 except Exception:
@@ -168,8 +175,8 @@ def lessoncreate():
         session = create_session()
         lesson = Lessons(title=request.form['lsnm1'],
                          to_subject=shadow.taught_subject,
-                         to_class=shadow.a_class,
-                         lesson_date=datetime.date(2020, 11, 1),
+                         to_class=request.form['class_id'],
+                         lesson_date=datetime.datetime.today().date(),
                          author=shadow.id,
                          lesson_file=f"{file_prefix}_lesson.txt")
         session.add(lesson)
@@ -179,6 +186,10 @@ def lessoncreate():
 
 @app.route('/testcreate/<int:lesson_id>', methods=['GET', 'POST'])
 def testcreate(lesson_id):
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    if current_user.role == "Student":
+        return redirect("/")
     if request.method == 'GET':
         return render_template('testcreate.html', url_for=url_for, lesson_id=lesson_id)
     elif request.method == 'POST':
@@ -204,7 +215,7 @@ def testcreate(lesson_id):
                 f.write("|NewQuestion|\n")
         task = Tasks(to_subject=shadow.taught_subject,
                      to_lesson=lesson_id,
-                     task_date=datetime.date(2020, 11, 1),
+                     task_date=datetime.datetime.today().date(),
                      task_role="TEST",
                      task_file=f'{file_prefix}_task.txt')
         session = create_session()
@@ -219,6 +230,10 @@ def testcreate(lesson_id):
 @app.route('/readlesson/<int:lesson_id>')
 def readlesson(lesson_id):
     if not current_user.is_authenticated:
+        return redirect("/login")
+    if current_user.role == "Teacher":
+        return redirect("/")
+    if not current_user.is_authenticated:
         return redirect('/login')
     session = create_session()
     lesson = session.query(Lessons).get(lesson_id)
@@ -228,11 +243,16 @@ def readlesson(lesson_id):
             data[line] = data[line].strip("\n")
     return render_template('readlesson.html', data=data,
                            current_user=current_user,
-                           url_for=url_for)
+                           url_for=url_for,
+                           to_task=lesson.to_task)
 
 
 @app.route('/readtest/<int:task_id>', methods=['GET', 'POST'])
 def readtest(task_id):
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    if current_user.role == "Teacher":
+        return redirect("/")
     if not current_user.is_authenticated:
         return redirect('/login')
     if request.method == 'GET':
@@ -255,13 +275,40 @@ def readtest(task_id):
         return render_template('readtest.html', data=file,
                                current_user=current_user, rand=rand,
                                right_answers="".join([str(i % 4 + 1) for i in range(len(rand)) if rand[i] == 4]),
-                               task_id="test_value")
+                               task_id=task_id)
     elif request.method == 'POST':
         mark = 0
         for i, r in enumerate(request.form["right_answers"]):
             if request.form[str(i + 1)] == r:
                 mark += 1
-        return render_template('result.html', mark=int((mark / len(request.form["right_answers"])) * 100))
+        mark = int((mark / len(request.form["right_answers"])) * 100)
+        if mark >= 80:
+            session = create_session()
+            task = session.query(Tasks).get(request.form["task_id"])
+            lesson = session.query(Lessons).get(task.to_lesson)
+            completed_by = lesson.completed_by
+            if completed_by is None:
+                completed_by = ''
+            shadow = find_shadow(current_user)
+            if completed_by:
+                completed_by += ', ' + str(shadow.id)
+            else:
+                completed_by += str(shadow.id)
+            lesson.completed_by = completed_by
+            session.commit()
+        return render_template('result.html', mark=mark)
+
+
+@app.route('/students')
+def students():
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    if current_user.role == "Student":
+        return redirect("/")
+    shadow = find_shadow(current_user)
+    session = create_session()
+    sts = [st for st in session.query(Students).filter(Students.in_class == shadow.a_class)]
+    return render_template('students.html', students=sts)
 
 
 if __name__ == '__main__':

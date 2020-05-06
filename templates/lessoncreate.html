@@ -56,6 +56,7 @@
 <input type="button" value="Add Picture" class="immg" onclick="loadimmg();">
 <input type="button" value="Remove" class="dell" onclick="removestuff();">
 <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="class_id" value="{{ class_id }}">
     <input type="text" name="lsnm1" value="Lesson Name">
     <input type="submit" value="Save Lesson" class="send">
     <div id="block-1">
