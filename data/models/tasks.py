@@ -10,7 +10,6 @@ class Tasks(SqlAlchemyBase):
     to_lesson = sa.Column('to_lesson', sa.Integer, sa.ForeignKey("lessons.id"), nullable=True)
     mark = sa.Column('mark', sa.Integer, nullable=True)
     task_date = sa.Column('task_date', sa.Date, nullable=True)
-    task_role = sa.Column('task_role', sa.String, nullable=True)
     task_file = sa.Column('task_file', sa.Integer, nullable=True)
 
     lessons = sa.orm.relation("Lessons", foreign_keys=[to_lesson])

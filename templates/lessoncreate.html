@@ -49,6 +49,7 @@
     }
 
 
+
 </style>
 <script src="{{ url_for('static', filename='form.js', v=6) }}"></script>
 <br>
@@ -57,10 +58,10 @@
 <input type="button" value="Remove" class="dell" onclick="removestuff();">
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" name="class_id" value="{{ class_id }}">
-    <label for="date"><h5>Дата урока - </h5></label><input type="date" name = "date" id = 'date'></br>
-    <label for="lessonname"><h5>Название урока - </h5></label><input type="text" name="lsnm1" id = "lessonname"value="Lesson Name"></br>
+    <label for="date"><h5>Дата урока - </h5></label><input type="date" name="date" id='date'></br>
+    <label for="lessonname"><h5>Название урока - </h5></label><input type="text" name="lsnm1" id="lessonname" value="Lesson Name"></br>
     <label for="role"><h5>Роль урока - </h5></label>
-    <select id = 'role'>
+    <select id='role' name='role'>
         <option value="Домашняя работа">Домашняя работа</option>
         <option value="Контрольная работа">Контрольная работа</option>
         <option value="Самостоятельная работа">Самостоятельная работа</option>

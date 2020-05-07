@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class="my_table">
+    <tr>
+        <th>#</th>
+        <th>Название работы</th>
+        <th>Предмет</th>
+        <th>Роль работы</th>
+        <th>Дата выполнения</th>
+    </tr>
+    {% for lesson in lessons %}
+        <tr>
+            <td scope="row">{{ loop.index }}</td>
+            <td>{{ lesson.title }}</td>
+            <td>{{ lesson.subjects.subjects }}</td>
+            <td>{{ lesson.role }}</td>
+            <td>{{ lesson.lesson_date }}</td>
+        </tr>
+    {% endfor %}
+
+</table>
+<style>
+    table {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 14px;
+        margin-top: 40px;
+        margin-left: auto;
+        margin-right: auto;
+        background: #e8d1c8;
+        max-width: 50%;
+        width: 50%;
+        border-collapse: collapse;
+        border-radius: 8px 8px 8px 8px;
+    }
+    td, th {
+        padding: 10px;
+    }
+</style>
+{% endblock %}

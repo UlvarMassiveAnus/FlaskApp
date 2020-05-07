@@ -180,6 +180,7 @@ def lessoncreate(class_id):
                          author=shadow.id,
                          role=request.form['role'],
                          lesson_file=f"{file_prefix}_lesson.txt")
+
         session.add(lesson)
         session.commit()
         return redirect(f'/testcreate/{lesson.id}')
@@ -217,7 +218,6 @@ def testcreate(lesson_id):
         task = Tasks(to_subject=shadow.taught_subject,
                      to_lesson=lesson_id,
                      task_date=datetime.datetime.today().date(),
-                     task_role="TEST",
                      task_file=f'{file_prefix}_task.txt')
         session = create_session()
         session.add(task)
@@ -288,14 +288,12 @@ def readtest(task_id):
             task = session.query(Tasks).get(request.form["task_id"])
             lesson = session.query(Lessons).get(task.to_lesson)
             completed_by = lesson.completed_by
-            if completed_by is None:
-                completed_by = ''
+            if completed_by is None or not completed_by:
+                completed_by = []
             shadow = find_shadow(current_user)
-            if completed_by:
-                completed_by += ', ' + str(shadow.id)
-            else:
-                completed_by += str(shadow.id)
-            lesson.completed_by = completed_by
+            if str(shadow.id) not in completed_by:
+                completed_by.append(str(shadow.id))
+            lesson.completed_by = ", ".join(completed_by)
             session.commit()
         return render_template('result.html', mark=mark)
 
@@ -310,6 +308,19 @@ def students():
     session = create_session()
     sts = [st for st in session.query(Students).filter(Students.in_class == shadow.a_class)]
     return render_template('students.html', students=sts)
+
+
+@app.route('/marks')
+def marks():
+    if current_user.role == "Teacher":
+        return redirect("/")
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    shadow = find_shadow(current_user)
+    session = create_session()
+    cmpl = [ls for ls in session.query(Lessons).all() if
+            ls.completed_by is not None and str(shadow.id) in ls.completed_by.split(', ')]
+    return render_template('marks.html', lessons=cmpl)
 
 
 if __name__ == '__main__':

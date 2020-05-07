@@ -11,6 +11,7 @@ class Lessons(SqlAlchemyBase, SerializerMixin):
     to_subject = sa.Column('to_subject', sa.Integer, sa.ForeignKey("subjects.id"), nullable=True)
     to_task = sa.Column('to_task', sa.Integer, sa.ForeignKey("tasks.id"), nullable=True)
     to_class = sa.Column('to_class', sa.Integer, sa.ForeignKey("a_classes.id"), nullable=True)
+    role = sa.Column('role', sa.String, nullable=True)
     lesson_date = sa.Column('lesson_date', sa.Date, nullable=True)
     author = sa.Column('author', sa.String, sa.ForeignKey("teachers.id"), nullable=True)
     completed_by = sa.Column('completed_by', sa.String, nullable=True)
