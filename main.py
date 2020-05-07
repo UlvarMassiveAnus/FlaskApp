@@ -176,8 +176,9 @@ def lessoncreate(class_id):
         lesson = Lessons(title=request.form['lsnm1'],
                          to_subject=shadow.taught_subject,
                          to_class=request.form['class_id'],
-                         lesson_date=datetime.datetime.today().date(),
+                         lesson_date=datetime.date(*[int(item) for item in request.form['date'].split('-')]),
                          author=shadow.id,
+                         role=request.form['role'],
                          lesson_file=f"{file_prefix}_lesson.txt")
         session.add(lesson)
         session.commit()
