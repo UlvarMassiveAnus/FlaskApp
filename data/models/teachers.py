@@ -1,9 +1,9 @@
 import sqlalchemy as sa
 from data.db_session import SqlAlchemyBase
-from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Teachers(SqlAlchemyBase):
+class Teachers(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'teachers'
 
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
@@ -15,9 +15,3 @@ class Teachers(SqlAlchemyBase):
     subjects = sa.orm.relation("Subjects", foreign_keys=[taught_subject])
     a_classes = sa.orm.relation('AClasses', foreign_keys=[a_class])
     users = sa.orm.relation('Users', foreign_keys=[user_id])
-
-    def set_password(self, password):
-        self.hashed_password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return self.hashed_password == password

@@ -1,9 +1,9 @@
 import sqlalchemy as sa
 from data.db_session import SqlAlchemyBase
-from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Students(SqlAlchemyBase):
+class Students(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'students'
 
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)

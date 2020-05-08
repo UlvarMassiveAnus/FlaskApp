@@ -1,10 +1,5 @@
-from data.db_session import create_session, global_init
-from data.models.teachers import Teachers
-from data.models.a_class import AClasses
-import datetime
-from data.models.lessons import Lessons
+import requests
 
-global_init("db/project.sqlite")
-session = create_session()
-t = session.query(Lessons).get(10)
-print(t.lesson_date)
+print(requests.get("http://127.0.0.1:5000/api/v1/teachers").json())
+print(requests.get("http://127.0.0.1:5000/api/v1/students").json())
+print(requests.delete("http://127.0.0.1:5000/api/v1/users/4").json())
