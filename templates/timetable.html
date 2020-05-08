@@ -4,28 +4,30 @@
     <h1 class="text-center">Ваше расписание на сегодня</h1>
     {% if lessons %}
         {% for item in lessons %}
+            {% if none_check(item.completed_by) and shadow_id in item.completed_by.split(', ') %}
+                {% set cmp = 'Выполнено' %}
+            {% else %}
+                {% set cmp = 'Не выполнено' %}
+            {% endif %}
             {% if loop.first %}
                 <div class="bg-secondary d-flex p-2 bd-highlight fround">
                     <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
-                        <h2>
-                        {{ loop.index }}. {{item.title}}
-                        </h2>
+                        <h2>{{ loop.index }}. {{item.title}}</h2>
+                        <p>| {{ item.subjects.subjects }} | {{ cmp }} |</p>
                     </a>
                 </div>
             {% elif loop.last %}
                 <div class="bg-secondary d-flex p-2 bd-highlight lround">
                     <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
-                        <h2>
-                        {{ loop.index }}. {{item.title}}
-                        </h2>
+                        <h2>{{ loop.index }}. {{item.title}}</h2>
+                        <p>| {{ item.subjects.subjects }} | {{ cmp }} |</p>
                     </a>
                 </div>
             {% else %}
                 <div class="bg-secondary d-flex p-2 bd-highlight">
                     <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
-                        <h2>
-                        {{ loop.index }}. {{item.title}}
-                        </h2>
+                        <h2>{{ loop.index }}. {{item.title}}</h2>
+                        <p>| {{ item.subjects.subjects }} | {{ cmp }} |</p>
                     </a>
                 </div>
             {% endif %}

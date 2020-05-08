@@ -3,6 +3,7 @@
 {% block content %}
 <style>
     .txxt {
+        width: 250px;
         position: fixed; /* Фиксированное положение */
         right: 1%; /* Расстояние от правого края окна браузера */
         top: 22%; /* Расстояние сверху */
@@ -13,7 +14,9 @@
     .txxt:hover {
         background: #786b59; /* Цвет фона */
     }
-    .immg {position: fixed; /* Фиксированное положение */
+    .immg {
+        width: 250px;
+        position: fixed; /* Фиксированное положение */
         right: 1%; /* Расстояние от правого края окна браузера */
         top: 15%; /* Расстояние сверху */
         padding: 1%; /* Поля вокруг текста */
@@ -23,6 +26,7 @@
         background: #786b59; /* Цвет фона */
     }
     .dell{
+        width: 250px;
         position: fixed; /* Фиксированное положение */
         right: 1%; /* Расстояние от правого края окна браузера */
         top: 29%; /* Расстояние сверху */
@@ -34,6 +38,7 @@
         background: #786b59; /* Цвет фона */
     }
     .send{
+        width: 250px;
         position: fixed; /* Фиксированное положение */
         right: 1%; /* Расстояние от правого края окна браузера */
         top: 36%; /* Расстояние сверху */
@@ -52,12 +57,12 @@
 
 </style>
 <script src="{{ url_for('static', filename='form.js', v=6) }}"></script>
-<br>
-<input type="button" value="Add Text" class="txxt" onclick="addtxxt();">
-<input type="button" value="Add Picture" class="immg" onclick="loadimmg();">
-<input type="button" value="Remove" class="dell" onclick="removestuff();">
-<form method="post" enctype="multipart/form-data">
+<input type="button" value="Добавить параграф" class="txxt" onclick="addtxxt();">
+<input type="button" value="Добавить фото" class="immg" onclick="loadimmg();">
+<input type="button" value="Удалить последний блок" class="dell" onclick="removestuff();">
+<form class="ml-3 mt-3" method="post" enctype="multipart/form-data">
     <input type="hidden" name="class_id" value="{{ class_id }}">
+    {% if message %}<div class="text-danger mb-2">*{{ message }}</div>{% endif %}
     <label for="date"><h5>Дата урока - </h5></label><input type="date" name="date" id='date'></br>
     <label for="lessonname"><h5>Название урока - </h5></label><input type="text" name="lsnm1" id="lessonname" value="Lesson Name"></br>
     <label for="role"><h5>Роль урока - </h5></label>
@@ -66,7 +71,7 @@
         <option value="Контрольная работа">Контрольная работа</option>
         <option value="Самостоятельная работа">Самостоятельная работа</option>
     </select>
-    <input type="submit" value="Save Lesson" class="send">
+    <input type="submit" value="Сохранить урок" class="send">
     <div id="block-1">
     </div>
 </form>

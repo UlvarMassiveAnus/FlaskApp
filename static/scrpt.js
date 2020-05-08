@@ -16,12 +16,16 @@ function addtxxt() {
 
 		texts.setAttribute('cols','88');
 		texts.setAttribute('rows','5'); 
-		texts.setAttribute('placeholder','Question text');
+		texts.setAttribute('placeholder','Текст вопроса');
 		texts.setAttribute('name','qst'+i);
 
 		wrn1.setAttribute('type','text');
 		wrn2.setAttribute('type','text');
 		wrn3.setAttribute('type','text');
+
+		wrn1.setAttribute('class','mr-1');
+		wrn2.setAttribute('class','mr-1');
+		wrn3.setAttribute('class','mr-1');
 
 		wrn1.setAttribute('name','wrn'+j+'-'+i);
 		j++;
@@ -31,7 +35,7 @@ function addtxxt() {
 		j++;
 
 		rght.setAttribute('type','text');
-		rght.setAttribute('value','Right anwser');
+		rght.setAttribute('value','Правильный ответ');
 		rght.setAttribute('class','rght');
 		rght.setAttribute('name','rgh'+j+'-'+i);
 		
