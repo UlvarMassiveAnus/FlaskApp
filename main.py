@@ -354,4 +354,5 @@ if __name__ == '__main__':
     api.add_resource(UsersResources, '/api/v1/users/<int:users_id>')
     api.add_resource(TeachersListResources, '/api/v1/teachers')
     api.add_resource(StudentsListResources, '/api/v1/students')
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
