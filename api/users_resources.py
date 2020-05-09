@@ -64,9 +64,9 @@ class TeachersListResources(Resource):
             name=args['name'],
             birth_date=datetime.date(*[int(item) for item in args['birth_date'].split('-')]),
             role=args['role'],
-            email=args['email'],
-            password=args['password']
+            email=args['email']
         )
+        user.set_password(args['password'])
         session.add(user)
         session.commit()
         user = session.query(Users).filter(Users.email == args['email']).first()
@@ -99,9 +99,9 @@ class StudentsListResources(Resource):
             name=args['name'],
             birth_date=datetime.date(*[int(item) for item in args['birth_date'].split('-')]),
             role=args['role'],
-            email=args['email'],
-            password=args['password']
+            email=args['email']
         )
+        user.set_password(args['password'])
         session.add(user)
         session.commit()
         user = session.query(Users).filter(Users.email == args['email']).first()
