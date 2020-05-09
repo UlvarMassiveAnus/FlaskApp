@@ -10,7 +10,7 @@
         <p>{{ line }}</p>
     {% endif %}
 {% endfor %}
-<a href="/readtest/{{ to_task }}" class="btn btn-primary">Пройти тестирование</a>
+<a href="/readtest/{{ to_task }}" class="btn btnn btn-dark">Пройти тестирование</a>
 <style>
     img {
         height: 400px;
@@ -27,5 +27,13 @@
         word-wrap: break-word;
         line-height: 135%;
     }
+    .btnn {
+        color: white;
+        width: 250px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+    .btnn:hover{background: rgb(120,120,120); }
 </style>
 {% endblock %}

@@ -303,7 +303,7 @@ def readtest(task_id):
             if request.form[str(i + 1)] == r:
                 mark += 1
         mark = int((mark / len(request.form["right_answers"])) * 100)
-        if mark >= 80:
+        if mark >= 75:
             session = create_session()
             task = session.query(Tasks).get(request.form["task_id"])
             lesson = session.query(Lessons).get(task.to_lesson)
