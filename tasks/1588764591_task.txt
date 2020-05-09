@@ -1,0 +1,6 @@
+Некторый тест?
+[1]
+[2]
+[3]
+[Right anwser]
+|NewQuestion|
