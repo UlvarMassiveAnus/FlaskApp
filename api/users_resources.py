@@ -78,7 +78,7 @@ class TeachersListResources(Resource):
         session.add(teacher)
         session.commit()
         teacher = session.query(Teachers).filter(Teachers.user_id == user.id).first()
-        a_class = session.query(AClasses).get(teacher.a_class)
+        a_class = session.query(AClasses).filter(AClasses.title == args['a_class']).first()
         a_class.teacher = teacher.id
         session.commit()
         return jsonify({'success': 'OK'})
