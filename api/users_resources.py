@@ -72,7 +72,7 @@ class TeachersListResources(Resource):
         user = session.query(Users).filter(Users.email == args['email']).first()
         teacher = Teachers(
             taught_subject=args['taught_subject'],
-            a_class=args['a_class'],
+            a_class=session.query(AClasses).filter(AClasses.title == args['a_class']).id,
             user_id=user.id
         )
         session.add(teacher)
@@ -106,7 +106,7 @@ class StudentsListResources(Resource):
         session.commit()
         user = session.query(Users).filter(Users.email == args['email']).first()
         student = Students(
-            in_class=args['in_class'],
+            in_class=session.query(AClasses).filter(AClasses.title == args['in_class']).id,
             user_id=user.id
         )
         session.add(student)

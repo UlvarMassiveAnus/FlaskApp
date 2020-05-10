@@ -15,11 +15,11 @@ def create_users_list_parser():
 def teacher_parser():
     parser = create_users_list_parser()
     parser.add_argument('taught_subject', required=True, type=int)
-    parser.add_argument('a_class', required=True, type=int)
+    parser.add_argument('a_class', required=True)
     return parser
 
 
 def student_parser():
     parser = create_users_list_parser()
-    parser.add_argument('in_class', required=True, type=int)
+    parser.add_argument('in_class', required=True)
     return parser
