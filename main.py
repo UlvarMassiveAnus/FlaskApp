@@ -15,6 +15,7 @@ from forms import LoginForm
 from api.lessons_resources import LessonsResources, LessonsListResources
 from api.tasks_resources import TasksResources, TasksListResources
 from api.users_resources import UsersResources, TeachersListResources, StudentsListResources
+from api.classes_resources import AClassResource, AClassListResource
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0e294ca639af91b8aaefcdd6ccdbd9b1'
@@ -354,5 +355,7 @@ if __name__ == '__main__':
     api.add_resource(UsersResources, '/api/v1/users/<int:users_id>')
     api.add_resource(TeachersListResources, '/api/v1/teachers')
     api.add_resource(StudentsListResources, '/api/v1/students')
+    api.add_resource(AClassResource, '/api/v1/classes/<int:class_id>')
+    api.add_resource(AClassListResource, '/api/v1/classes')
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
