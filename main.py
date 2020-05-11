@@ -311,6 +311,7 @@ def readtest(task_id):
             completed_by = lesson.completed_by
             if completed_by is None or not completed_by:
                 completed_by = []
+            completed_by = completed_by.split(", ")
             shadow = find_shadow(current_user)
             if str(shadow.id) not in completed_by:
                 completed_by.append(str(shadow.id))
