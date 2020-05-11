@@ -11,7 +11,7 @@ print(requests.post("https://pure-spire-34349.herokuapp.com/api/v1/students", js
                                                                                     "email": "test_student1@mail.ru",
                                                                                     "password": "123",
                                                                                     "role": "Student",
-                                                                                    "in_class": "105"}).json())
+                                                                                    "in_class": "101"}).json())
 """
 print(requests.post("https://pure-spire-34349.herokuapp.com/api/v1/teachers", json={"surname": "teachers_surname",
                                                                                     "name": "teachers_name",
