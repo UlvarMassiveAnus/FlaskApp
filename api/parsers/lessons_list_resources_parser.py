@@ -10,4 +10,5 @@ def create_lessons_list_parser():
     parser.add_argument('lesson_date', required=True)
     parser.add_argument('author', required=True, type=int)
     parser.add_argument('lesson_file', required=True)
+    parser.add_argument('key', required=True)
     return parser

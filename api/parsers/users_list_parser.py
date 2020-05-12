@@ -9,6 +9,7 @@ def create_users_list_parser():
     parser.add_argument('email', required=True)
     parser.add_argument('password', required=True)
     parser.add_argument('role', required=True)
+    parser.add_argument('key', required=True)
     return parser
 
 

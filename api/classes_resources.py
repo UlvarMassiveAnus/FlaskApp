@@ -29,6 +29,8 @@ class AClassListResource(Resource):
     def post(self):
         parser = create_classes_list_parser()
         args = parser.parse_args()
+        if args['key'] != 'secret_key':
+            return jsonify({"error": "Invalid secret key"})
         session = create_session()
         a_class = AClasses(
             title=args['title']

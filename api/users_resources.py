@@ -59,6 +59,8 @@ class TeachersListResources(Resource):
         session = create_session()
         parser = teacher_parser()
         args = parser.parse_args()
+        if args['key'] != 'secret_key':
+            return jsonify({"error": "Invalid secret key"})
         user = Users(
             surname=args['surname'],
             name=args['name'],
@@ -94,6 +96,8 @@ class StudentsListResources(Resource):
         session = create_session()
         parser = student_parser()
         args = parser.parse_args()
+        if args['key'] != 'secret_key':
+            return jsonify({"error": "Invalid secret key"})
         user = Users(
             surname=args['surname'],
             name=args['name'],

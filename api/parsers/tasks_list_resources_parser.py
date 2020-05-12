@@ -9,4 +9,5 @@ def create_tasks_list_parser():
     parser.add_argument('task_date', required=True)
     parser.add_argument('task_role', required=True, type=int)
     parser.add_argument('task_file', required=True)
+    parser.add_argument('key', required=True)
     return parser
