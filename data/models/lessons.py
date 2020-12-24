@@ -2,6 +2,12 @@ import sqlalchemy as sa
 from data.db_session import SqlAlchemyBase
 from sqlalchemy_serializer import SerializerMixin
 
+lessons_to_students = sa.Table('lessons_to_students',
+                               SqlAlchemyBase.metadata,
+                               sa.Column('lessons_id', sa.Integer, sa.ForeignKey('lessons.id')),
+                               sa.Column('students_id', sa.Integer, sa.ForeignKey('students.id')),
+                               sa.Column('mark', sa.Integer))
+
 
 class Lessons(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'lessons'
@@ -21,3 +27,4 @@ class Lessons(SqlAlchemyBase, SerializerMixin):
     tasks = sa.orm.relation("Tasks", foreign_keys=[to_task])
     teachers = sa.orm.relation("Teachers", foreign_keys=[author])
     a_classes = sa.orm.relation("AClasses", foreign_keys=[to_class])
+    lessons_to_students = sa.orm.relation("LessonsToStudents")

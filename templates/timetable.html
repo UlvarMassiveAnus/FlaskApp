@@ -11,21 +11,21 @@
             {% endif %}
             {% if loop.first %}
                 <div class="bg-secondary d-flex p-2 bd-highlight fround">
-                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
+                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="{% if cmp == 'Выполнено'%} /timetable {% else %}/readlesson/{{ item.id }}{% endif %}">
                         <h2>{{ loop.index }}. {{item.title}}</h2>
                         <p>| {{ item.subjects.subjects }} | {{ cmp }} |</p>
                     </a>
                 </div>
             {% elif loop.last %}
                 <div class="bg-secondary d-flex p-2 bd-highlight lround">
-                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
+                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="{% if cmp == 'Выполнено'%} /timetable {% else %}/readlesson/{{ item.id }}{% endif %}">
                         <h2>{{ loop.index }}. {{item.title}}</h2>
                         <p>| {{ item.subjects.subjects }} | {{ cmp }} |</p>
                     </a>
                 </div>
             {% else %}
                 <div class="bg-secondary d-flex p-2 bd-highlight">
-                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="/readlesson/{{ item.id }}">
+                    <a class="btn bg-light shadow-sm p-1 mb-1 flex-fill rounded text-left" href="{% if cmp == 'Выполнено'%} /timetable {% else %}/readlesson/{{ item.id }}{% endif %}">
                         <h2>{{ loop.index }}. {{item.title}}</h2>
                         <p>| {{ item.subjects.subjects }} | {{ cmp }} |</p>
                     </a>

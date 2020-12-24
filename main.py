@@ -5,12 +5,13 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask_restful import Api
 from data.db_session import global_init, create_session
-from data.models.lessons import Lessons
+from data.models.lessons import Lessons, lessons_to_students
 from data.models.users import Users
 from data.models.teachers import Teachers
 from data.models.students import Students
 from data.models.a_class import AClasses
 from data.models.tasks import Tasks
+from data.models.lessons_to_students import LessonsToStudents
 from forms import LoginForm
 from api.lessons_resources import LessonsResources, LessonsListResources
 from api.tasks_resources import TasksResources, TasksListResources
@@ -304,6 +305,7 @@ def readtest(task_id):
             if request.form[str(i + 1)] == r:
                 mark += 1
         mark = int((mark / len(request.form["right_answers"])) * 100)
+
         if mark >= 75:
             session = create_session()
             task = session.query(Tasks).get(request.form["task_id"])
@@ -317,7 +319,12 @@ def readtest(task_id):
             if str(shadow.id) not in completed_by:
                 completed_by.append(str(shadow.id))
             lesson.completed_by = ", ".join(completed_by)
+
+            new_conn = LessonsToStudents(lessons_id=lesson.id, students_id=shadow.id, mark=mark)
+            session.add(new_conn)
             session.commit()
+            added_conn = session.query(LessonsToStudents).get(1)
+            print(added_conn.students, added_conn.lessons)
         return render_template('result.html', mark=mark)
 
 
@@ -346,6 +353,19 @@ def marks():
     cmpl = [ls for ls in session.query(Lessons).all() if
             ls.completed_by is not None and str(shadow.id) in ls.completed_by.split(', ')]
     return render_template('marks.html', lessons=cmpl)
+
+
+@app.route('/journal')
+def journal():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    if current_user.role == 'Student':
+        return redirect('/')
+
+    shadow = find_shadow(current_user)
+    session = create_session()
+    lessons = [[ls.title, ls.role, ls.lesson_date, ls.to_class, [(session.query(Users).get(session.query(Students).get(conn.students_id).user_id), conn.mark) for conn in session.query(LessonsToStudents).filter(LessonsToStudents.lessons_id == ls.id)]] for ls in session.query(Lessons).filter(Lessons.to_class == shadow.a_class)]
+    return render_template('journal.html', lessons=lessons)
 
 
 if __name__ == '__main__':

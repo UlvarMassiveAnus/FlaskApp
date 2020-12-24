@@ -1,1 +1,1 @@
-from data.models import lessons, subjects, users, teachers, tasks, a_class, students
+from data.models import lessons, subjects, users, teachers, tasks, a_class, students, lessons_to_students

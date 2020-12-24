@@ -13,4 +13,5 @@ class Students(SqlAlchemyBase, SerializerMixin):
 
     users = sa.orm.relation('Users', foreign_keys=[user_id])
     a_classes = sa.orm.relation('AClasses', foreign_keys=[in_class])
+    lessons_to_students = sa.orm.relation("LessonsToStudents")
 
